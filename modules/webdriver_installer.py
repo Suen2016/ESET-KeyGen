@@ -5,7 +5,7 @@ from subprocess import Popen, check_output, PIPE, DEVNULL
 from requests import get, head
 from zipfile import ZipFile
 from shutil import which
-from os import remove
+from os import remove, environ
 
 def get_platform():
     result = ['', []]
@@ -14,7 +14,7 @@ def get_platform():
         if sys.maxsize > 2**32:
             result[1] = ['win64', 'win32']
         else:
-            result[2] = ['win32']
+            result[1] = ['win32']
     elif sys.platform.startswith('linux'):
         result[0] = 'linux'
         if sys.maxsize > 2**32:
@@ -47,7 +47,8 @@ def get_chrome_version():
     elif platform == "win":
         paths = [
             "C:\\Program Files\\Google\\Chrome\\Application\\",
-            "C:\\Program Files (x86)\\Google\\Chrome\\Application\\"
+            "C:\\Program Files (x86)\\Google\\Chrome\\Application\\",
+            environ.get('LOCALAPPDATA')+"\\Google\\Chrome\\Application\\"
         ]
         for path in paths:
             try:

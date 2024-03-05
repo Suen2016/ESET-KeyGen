@@ -1,13 +1,14 @@
 LOGO = """
-███████╗███████╗███████╗████████╗   ██╗  ██╗███████╗██╗   ██╗ ██████╗ ███████╗███╗   ██╗  
-██╔════╝██╔════╝██╔════╝╚══██╔══╝   ██║ ██╔╝██╔════╝╚██╗ ██╔╝██╔════╝ ██╔════╝████╗  ██║   
-█████╗  ███████╗█████╗     ██║      █████╔╝ █████╗   ╚████╔╝ ██║  ███╗█████╗  ██╔██╗ ██║  
+███████╗███████╗███████╗████████╗   ██╗  ██╗███████╗██╗   ██╗ ██████╗ ███████╗███╗   ██╗
+██╔════╝██╔════╝██╔════╝╚══██╔══╝   ██║ ██╔╝██╔════╝╚██╗ ██╔╝██╔════╝ ██╔════╝████╗  ██║
+█████╗  ███████╗█████╗     ██║      █████╔╝ █████╗   ╚████╔╝ ██║  ███╗█████╗  ██╔██╗ ██║
 ██╔══╝  ╚════██║██╔══╝     ██║      ██╔═██╗ ██╔══╝    ╚██╔╝  ██║   ██║██╔══╝  ██║╚██╗██║   
 ███████╗███████║███████╗   ██║      ██║  ██╗███████╗   ██║   ╚██████╔╝███████╗██║ ╚████║   
 ╚══════╝╚══════╝╚══════╝   ╚═╝      ╚═╝  ╚═╝╚══════╝   ╚═╝    ╚═════╝ ╚══════╝╚═╝  ╚═══╝                                                                      
-                                                Project Version: v1.3.0.0
+                                                Project Version: v1.3.2.2
                                                 Project Devs: rzc0d3r, AdityaGarg8, k0re,
-                                                              Fasjeit, alejanpa17, Ischunddu
+                                                              Fasjeit, alejanpa17, Ischunddu,
+                                                              soladify
 """
 
 import modules.webdriver_installer as webdriver_installer
@@ -20,7 +21,9 @@ import modules.sec_email_api as sec_email_api
 
 import subprocess
 import traceback
+import platform
 import datetime
+import argparse
 import sys
 import os
 
@@ -57,61 +60,71 @@ def webdriver_installer_menu(edge=False): # auto updating or installing google c
     logger.console_log('{0} webdriver version: {1}'.format(browser_name, current_webdriver_version), logger.INFO, False)
     webdriver_path = None
     if current_webdriver_version is None:
-        logger.console_log('\n{0} webdriver not detected, download attempt...'.format(browser_name), logger.ERROR)
+        logger.console_log('{0} webdriver not detected, download attempt...'.format(browser_name), logger.INFO)
     elif current_webdriver_version.split('.')[0] != browser_version[1]: # major version match
-        logger.console_log('\n{0} webdriver version doesn\'t match version of the installed {1}, trying to update...'.format(browser_name, browser_name), logger.ERROR)
+        logger.console_log('{0} webdriver version doesn\'t match version of the installed {1}, trying to update...'.format(browser_name, browser_name), logger.ERROR)
     if current_webdriver_version is None or current_webdriver_version.split('.')[0] != browser_version[1]:
         if edge:
             driver_url = webdriver_installer.get_edgedriver_download_url()
         else:
             driver_url = webdriver_installer.get_chromedriver_download_url()
         if driver_url is None:
-            logger.console_log('\nCouldn\'t find the right version for your system!', logger.ERROR)
-            if '--force' not in sys.argv:
-                method = input('\nRun the program anyway? (y/n): ')
-                if method == 'n':
-                    return False
+            logger.console_log('\nCouldn\'t find the right version for your system!\n', logger.ERROR)
         else:
             logger.console_log('\nFound a suitable version for your system!', logger.OK)
-            logger.console_log('\nDownloading...', logger.INFO)
+            logger.console_log('Downloading...', logger.INFO)
             if webdriver_installer.download_webdriver('.', driver_url, edge):
-                logger.console_log('{0} webdriver was successfully downloaded and unzipped!'.format(browser_name), logger.OK)
+                logger.console_log('{0} webdriver was successfully downloaded and unzipped!\n'.format(browser_name), logger.OK)
                 webdriver_path = os.path.join(os.getcwd(), webdriver_name)
-                if '--force' not in sys.argv:
-                    input('\nPress Enter to continue...')
             else:
-                logger.console_log('Error downloading or unpacking!', logger.ERROR)
-                if '--force' not in sys.argv:
-                    method = input('\nRun the program anyway? (y/n): ')
-                    if method == 'n':
-                        return False
+                logger.console_log('Error downloading or unpacking!\n', logger.ERROR)
     else:
+        logger.console_log('The driver has already been updated to the browser version!\n', logger.OK)
         webdriver_path = os.path.join(os.getcwd(), webdriver_name)
     return webdriver_path
 
 if __name__ == '__main__':
-    logger.console_log(LOGO)
+    print(LOGO)
+    args_parser = argparse.ArgumentParser()
+    # Required
+    ## Browsers
+    args_browsers = args_parser.add_mutually_exclusive_group(required=True)
+    args_browsers.add_argument('--chrome', action='store_true', help='Launching the project via Google Chrome browser')
+    args_browsers.add_argument('--firefox', action='store_true', help='Launching the project via Mozilla Firefox browser')
+    args_browsers.add_argument('--edge', action='store_true', help='Launching the project via Microsoft Edge browser')
+    ## Modes of operation
+    args_modes = args_parser.add_mutually_exclusive_group(required=True)
+    args_modes.add_argument('--key', action='store_true', help='Generating an antivirus license key')
+    args_modes.add_argument('--account', action='store_true', help='Generating an antivirus account')
+    args_modes.add_argument('--only-update', action='store_true', help='Updates/installs webdrivers and browsers without generating account and license key')
+    # Optional
+    args_parser.add_argument('--skip-webdriver-menu', action='store_true', help='Skips installation/upgrade webdrivers through the my custom wrapper (The built-in selenium-manager will be used)')
+    args_parser.add_argument('--no-headless', action='store_true', help='Shows the browser at runtime (The browser is hidden by default, but on Windows 7 this option is enabled by itself)')
+    args_parser.add_argument('--custom-browser-location', type=str, default='', help='Set path to the custom browser (to the binary file, useful when using non-standard releases, for example, Firefox Developer Edition)')
     try:
-        # Init
-        if '--cli' in sys.argv:
-            sys.argv.append('--force')
+        # changing input arguments for special cases
+        if platform.release() == '7' and webdriver_installer.get_platform()[0] == 'win': # fix for Windows 7
+            sys.argv.append('--no-headless')
+        # initialization and configuration of everything necessary for work
+        args = vars(args_parser.parse_args())
         driver = None
         webdriver_path = None
         browser_name = 'chrome'
-        if '--firefox' in sys.argv:
+        if args['firefox']:
             browser_name = 'firefox'
-        if '--edge' in sys.argv:
+        if args['edge']:
             browser_name = 'edge'
-        if '--skip-webdriver-menu' not in sys.argv and browser_name != 'firefox':
-            webdriver_path = webdriver_installer_menu('--edge' in sys.argv)
+        if not args['skip_webdriver_menu'] and browser_name != 'firefox': # updating or installing microsoft edge webdriver
+            webdriver_path = webdriver_installer_menu(args['edge'])
             if webdriver_path is not None:
                 os.chmod(webdriver_path, 0o777)
-        driver = shared_tools.initSeleniumWebDriver(browser_name, webdriver_path, headless=('--no-headless' not in sys.argv))
-        # Work
-        only_account = False
-        if '--account' in sys.argv:
+        if not args['only_update']:
+            driver = shared_tools.initSeleniumWebDriver(browser_name, webdriver_path, args['custom_browser_location'], (not args['no_headless']))
+        else:
+            sys.exit()
+        # main part of the program
+        if args['account']:
             logger.console_log('\n-- Account Generator --\n')
-            only_account = True
         else:
             logger.console_log('\n-- KeyGen --\n')
         email_obj = sec_email_api.SecEmail()
@@ -125,7 +138,7 @@ if __name__ == '__main__':
         driver = EsetReg.returnDriver()
         output_line = f'\nEmail: {email_obj.get_full_login()}\nPassword: {eset_password}\n'
         output_filename = 'ESET ACCOUNTS.txt'
-        if not only_account:
+        if args['key']:
             EsetKeyG = eset_keygen.EsetKeygen(email_obj, driver)
             EsetKeyG.sendRequestForKey()
             license_name, license_out_date, license_key = EsetKeyG.getLicenseData()
@@ -142,5 +155,3 @@ if __name__ == '__main__':
         if str(type(E)).find('selenium') and traceback_string.find('Stacktrace:') != -1: # disabling stacktrace output
             traceback_string = traceback_string.split('Stacktrace:', 1)[0]
         logger.console_log(traceback_string, logger.ERROR)
-    if '--cli' not in sys.argv:
-        input('Press Enter...')

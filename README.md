@@ -1,9 +1,12 @@
 # ESET-KeyGen
-ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on 13.01.2024 at 20:47 UTC+2)
+ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on 05.03.2024 at 18:16 UTC+2)
+
+![](img/project_preview.png)
+
 
 ---
-# My github page is currently blocked by ESET Antivirus, so you will not be able to access the project.
-## Before you can access my github page, you need to disable internet protection in Eset Antivirus. You now have access to this release! After you have done everything you want to do, turn internet protection back on.
+### My github page is currently blocked by ESET Antivirus, so you will not be able to access the project.
+### Before you can access my github page, you need to disable internet protection in Eset Antivirus. You now have access to this release! After you have done everything you want to do, turn internet protection back on.
 ### [The second way around this](wiki/GithubWorkaround.md)
 ---
 
@@ -12,20 +15,21 @@ ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on
 ## Using GitHub Actions CI
 You can simply use the GitHub actions workflow given [here](https://github.com/rzc0d3r/ESET-KeyGen/blob/main/.github/workflows/eset.yml) in your GitHub repo.
 
-Add the workflow file to your GitHub repo. Then goto the **Actions** tab, choose **ESET Keys & Accounts Generator (MAIN)** actions and then run the workflow.
+Make a fork of my project. Go to it.
+Then goto the **Actions** tab, choose **ESET Keys & Accounts Generator (MAIN)** actions and then run the workflow.
 
 It will ask the number of accounts and licenses to be generated. If you don't want to generate one of them, enter **0** as the answer.
 
 ## Using your Computer
 
-### Installing Google Chrome / Firefox
-#### Google Chrome
+### Installing Browser
+#### Google Chrome (fully supports)
 
 1. [How to install Chrome on Windows](https://support.google.com/chrome/answer/95346?hl=en&co=GENIE.Platform%3DDesktop#zippy=%2Cwindows)
 2. [How to install Chrome on Linux](https://support.google.com/chrome/answer/95346?hl=en&co=GENIE.Platform%3DDesktop#zippy=%2Clinux)
 3. [How to install Chrome on Mac](https://support.google.com/chrome/answer/95346?hl=en&co=GENIE.Platform%3DDesktop#zippy=%2Clinux%2Cmac)
 
-#### Firefox
+#### Mozilla Firefox (supported, but without auto-update)
 1. [How to install Firefox on Windows](https://support.mozilla.org/en-US/kb/how-install-firefox-windows)
 2. [How to Install Firefox on Linux](https://support.mozilla.org/en-US/kb/install-firefox-linux)
 3. [How to Install Firefox on Mac](https://support.mozilla.org/en-US/kb/how-download-and-install-firefox-mac)
@@ -35,7 +39,7 @@ It will ask the number of accounts and licenses to be generated. If you don't wa
 
 ### Installing python and libraries
 
-> You can skip this step if you use the compiled .exe file from the release
+> You can skip this step if you use the compiled executable file from the release
 
 1. Go to the official [Python website](https://www.python.org/downloads) and download the version for your system (the project runs starting with [Python 3.8.0](https://www.python.org/downloads/release/python-380))
 
@@ -45,23 +49,18 @@ It will ask the number of accounts and licenses to be generated. If you don't wa
 pip install -r requirements.txt
 ```
 
-Or without requirements.txt:
-
-```
-pip install selenium requests colorama
-```
-
 ## Preparing ESET
 Delete your current ESET HOME account
 
 ![](img/delete_eset_home_account.png)
 
-## Using the repository
+## How to use (Part 2)
 1. [Account Generator](wiki/AccountGenerator.md)
 2. [Key Generator](wiki/KeyGenerator.md)
 3. [Command Line Arguments](wiki/CommandLineArguments.md)
+---
 
-# Recommendations and information
+# Additional information
 
 1. It is recommended to run the project as a non-administrator or root user.
 2. Do not minimize or close the browser window before the program is finished!!!
