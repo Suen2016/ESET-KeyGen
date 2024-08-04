@@ -6,6 +6,7 @@ from modules.EsetTools import EsetKeygen as EK
 from modules.EsetTools import EsetBusinessRegister as EBR
 from modules.EsetTools import EsetBusinessKeygen as EBK
 
+from modules.Statistics import Statistics
 from modules.SharedTools import *
 from modules.EmailAPIs import *
 from modules.Updater import get_assets_from_version, parse_update_json, updater_main
@@ -21,7 +22,7 @@ import sys
 import os
 import re
 
-VERSION = ['v1.4.9.2', 1492]
+VERSION = ['v1.4.9.6', 1496]
 LOGO = f"""
 ███████╗███████╗███████╗████████╗   ██╗  ██╗███████╗██╗   ██╗ ██████╗ ███████╗███╗   ██╗
 ██╔════╝██╔════╝██╔════╝╚══██╔══╝   ██║ ██╔╝██╔════╝╚██╗ ██╔╝██╔════╝ ██╔════╝████╗  ██║
@@ -34,9 +35,24 @@ LOGO = f"""
                                                               Fasjeit, alejanpa17, Ischunddu,
                                                               soladify, AngryBonk, Xoncia
 """
+if '--no-logo' in sys.argv:
+    LOGO = f"ESET KeyGen {VERSION[0]} by rzc0d3r\n"
+if datetime.datetime.now().day == 6 and datetime.datetime.now().month == 8: # Birthday of rzc0d3r
+    colored_logo = ''
+    colors = [getattr(Fore, attr) for attr in dir(Fore) if not attr.startswith('__')]
+    colors.remove(Fore.BLACK)
+    colors.remove(Fore.WHITE)
+    colors.remove(Fore.LIGHTWHITE_EX)
+    for line in LOGO.split('\n'):
+        for ch in line:
+            color = random.choice(colors)
+            colored_logo += (color+ch+Fore.RESET)
+        colored_logo += '\n'
+    colored_logo += f'{Fore.GREEN}rzc0d3r{Fore.RESET} celebrates his {Fore.LIGHTRED_EX}birthday{Fore.RESET} today!!! :)\n'
+    LOGO = colored_logo
 
 # -- Quick settings [for Developers to quickly change behavior without changing all files] --
-DEFAULT_EMAIL_API = 'developermail'
+DEFAULT_EMAIL_API = '1secmail'
 AVAILABLE_EMAIL_APIS = ['1secmail', 'hi2in', '10minutemail', 'tempmail', 'guerrillamail', 'developermail']
 WEB_WRAPPER_EMAIL_APIS = ['10minutemail', 'hi2in', 'tempmail', 'guerrillamail']
 EMAIL_API_CLASSES = {
@@ -66,6 +82,7 @@ args = {
     'email_api': DEFAULT_EMAIL_API,
     'custom_email_api': False,
     'skip_update_check': False,
+    'no_logo': False
 }
 
 def RunMenu():
@@ -86,7 +103,8 @@ def RunMenu():
             args,
             title='Modes of operation',
             action='store_true',
-            args_names=['key', 'account', 'business-account', 'business-key', 'only-webdriver-update', 'update'],
+            #args_names=['key', 'account', 'business-account', 'business-key', 'only-webdriver-update', 'update'],
+            args_names=['key', 'account', 'only-webdriver-update', 'update'],
             default_value='key')
     )
     SettingMenu.add_item(
@@ -162,8 +180,8 @@ def parse_argv():
         args_modes = args_parser.add_mutually_exclusive_group(required=True)
         args_modes.add_argument('--key', action='store_true', help='Generating an ESET-HOME license key (example as AGNV-XA2V-EA89-U546-UVJP)')
         args_modes.add_argument('--account', action='store_true', help='Generating an ESET HOME Account (To activate the free trial version)')
-        args_modes.add_argument('--business-account', action='store_true', help='Generating an ESET BUSINESS Account (To huge businesses) - Requires manual captcha input!!!')
-        args_modes.add_argument('--business-key', action='store_true', help='Generating an ESET BUSINESS Account and creating a universal license key for ESET products (1 key - 75 devices) - Requires manual captcha input!!!')
+        #args_modes.add_argument('--business-account', action='store_true', help='Generating an ESET BUSINESS Account (To huge businesses) - Requires manual captcha input!!!')
+        #args_modes.add_argument('--business-key', action='store_true', help='Generating an ESET BUSINESS Account and creating a universal license key for ESET products (1 key - 75 devices) - Requires manual captcha input!!!')
         args_modes.add_argument('--only-webdriver-update', action='store_true', help='Updates/installs webdrivers and browsers without generating account and license key')
         args_modes.add_argument('--update', action='store_true', help='Switching to program update mode - Overrides all arguments that are available!!!')
         # Optional
@@ -173,6 +191,7 @@ def parse_argv():
         args_parser.add_argument('--email-api', choices=AVAILABLE_EMAIL_APIS, default=DEFAULT_EMAIL_API, help='Specify which api to use for mail')
         args_parser.add_argument('--custom-email-api', action='store_true', help='Allows you to manually specify any email, and all work will go through it. But you will also have to manually read inbox and do what is described in the documentation for this argument')
         args_parser.add_argument('--skip-update-check', action='store_true', help='Skips checking for program updates')
+        args_parser.add_argument('--no-logo', action='store_true', help='Replaces ASCII-Art with plain text')
         #args_parser.add_argument('--try-auto-cloudflare',action='store_true', help='Removes the prompt for the user to press Enter when solving cloudflare captcha. In some cases it may go through automatically, which will give the opportunity to use tempmail in automatic mode!')
         try:
             global args
@@ -181,10 +200,27 @@ def parse_argv():
             time.sleep(3)
             sys.exit(-1)
 
+def send_statistics(statisctis_object: Statistics, name, value=''):
+    # sending program {name}-statistics
+    console_log(f'Sending {name}-statistics to the developer...', INFO, True)
+    for _ in range(5):
+        if statisctis_object.send_statistics(name, value):
+            console_log('Successfully sent!\n', OK, False)
+            break
+        time.sleep(1)
+    else:
+        console_log('Sending error, skipped!\n', ERROR, False)
+
 def main():
     if len(sys.argv) == 1: # for Menu
         print()
     try:
+        # disabling the ability to use business generation (since that method is dead)
+        args['business_key'] = False
+        args['business_account'] = False
+        # sending program runs-statistics
+        st = Statistics()
+        send_statistics(st, 'runs')
         # check program updates
         if args['update']:
             print('-- Updater --\n')
@@ -210,7 +246,7 @@ def main():
             except:
                 pass
         # initialization and configuration of everything necessary for work
-        webdriver_installer = WebDriverInstaller()
+        webdriver_installer = WebDriverInstaller(for_firefox=args['firefox'])
         # changing input arguments for special cases
         if platform.release() == '7' and sys.platform.startswith('win'): # fix for Windows 7
             args['no_headless'] = True
@@ -224,7 +260,10 @@ def main():
         if args['edge']:
             browser_name = 'edge'
         if not args['skip_webdriver_menu']: # updating or installing webdriver
-            webdriver_path = webdriver_installer.webdriver_installer_menu(args['edge'], args['firefox'])
+            if args['custom_browser_location'] == '':
+                webdriver_path, args['custom_browser_location'] = webdriver_installer.webdriver_installer_menu(args['edge'], args['firefox'])
+            else:
+                webdriver_path, _ = webdriver_installer.webdriver_installer_menu(args['edge'], args['firefox'])
             if webdriver_path is not None:
                 os.chmod(webdriver_path, 0o777)
         if not args['only_webdriver_update']:
@@ -329,7 +368,9 @@ def main():
         f = open(f"{str(date.day)}.{str(date.month)}.{str(date.year)} - "+output_filename, 'a')
         f.write(output_line)
         f.close()
-        driver.quit()
+        # sending program gens-statistics
+        st = Statistics()
+        send_statistics(st, 'gens')
     
     except Exception as E:
         traceback_string = traceback.format_exc()
@@ -340,6 +381,8 @@ def main():
         input('Press Enter to exit...')
     else:
         time.sleep(3) # exit-delay
+    if driver is not None:
+        driver.quit()
     sys.exit()
 
 if __name__ == '__main__':

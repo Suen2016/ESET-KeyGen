@@ -22,7 +22,7 @@
   python main.py --chrome --account
   ```
   ```
-  ESET-KeyGen_v1.4.7.0_win64.exe --chrome --account
+  ESET-KeyGen_v1.4.9.3_win64.exe --chrome --account
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
 
@@ -33,14 +33,14 @@
 </details>
 
 <details>
-  <summary>Business ESET Account</summary>
+  <summary>Business ESET Account [NOW NOT WORKING]</summary>
   
   1. Run main.py or executable file use [MBCI](https://github.com/rzc0d3r/ESET-KeyGen/blob/main/wiki/MBCI-Inferface.md):
   ```
   python main.py --chrome --business-account
   ```
   ```
-  ESET-KeyGen_v1.4.7.0_win64.exe --chrome --business-account
+  ESET-KeyGen_v1.4.9.3_win64.exe --chrome --business-account
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
   
@@ -64,7 +64,7 @@
   python main.py --chrome --account --custom-email-api
   ```
   ```
-  ESET-KeyGen_v1.4.7.0_win64.exe --chrome --account --custom-email-api
+  ESET-KeyGen_v1.4.9.3_win64.exe --chrome --account --custom-email-api
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
 
@@ -88,14 +88,14 @@
 </details>
 
 <details>
-  <summary>Business ESET Account</summary>
+  <summary>Business ESET Account [NOW NOT WORKING]</summary>
   
   1. Run main.py or executable file use [MBCI](https://github.com/rzc0d3r/ESET-KeyGen/blob/main/wiki/MBCI-Inferface.md):
   ```
   python main.py --chrome --business-account --custom-email-api
   ```
   ```
-  ESET-KeyGen_v1.4.7.0_win64.exe --chrome --business-account --custom-email-api
+  ESET-KeyGen_v1.4.9.3_win64.exe --chrome --business-account --custom-email-api
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
 

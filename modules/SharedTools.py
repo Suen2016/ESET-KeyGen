@@ -179,7 +179,8 @@ def initSeleniumWebDriver(browser_name: str, webdriver_path = None, browser_path
                 raise E
     elif browser_name.lower() == 'firefox':
         driver_options = FirefoxOptions()
-        driver_options.binary_location = browser_path
+        if browser_path.strip() != '':
+            driver_options.binary_location = browser_path
         driver_options.set_preference('intl.accept_languages', 'en-US')
         if headless:
             driver_options.add_argument('--headless')
@@ -206,8 +207,6 @@ def initSeleniumWebDriver(browser_name: str, webdriver_path = None, browser_path
             driver_options.add_argument('--no-sandbox')
             driver_options.add_argument('--disable-dev-shm-usage')
         driver = Edge(options=driver_options, service=EdgeService(executable_path=webdriver_path))
-    #driver.set_window_position(0, 0)
-    #driver.set_window_size(640, 640)
     return driver
 
 def parseToken(email_obj, driver=None, eset_business=False, delay=DEFAULT_DELAY, max_iter=DEFAULT_MAX_ITER):
